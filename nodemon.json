@@ -1,0 +1,5 @@
+{
+  "ext": "js jsx",
+  "watch": ["server/**/*.js", "server/**/*.jsx"],
+  "exec": "node -r dotenv/config -r @babel/register server/index.js"
+}
