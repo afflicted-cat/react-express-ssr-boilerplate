@@ -3,8 +3,9 @@ const nodeExternals = require('webpack-node-externals');
 const HappyPack = require('happypack');
 const merge = require('webpack-merge');
 const webpack = require('webpack');
-const paths = require('./paths');
 const { cpus } = require('os');
+
+const paths = require('./paths');
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const isDevelopment = NODE_ENV === 'development';
