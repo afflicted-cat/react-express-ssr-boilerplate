@@ -13,14 +13,14 @@ import { renderApp, renderHtml } from '../render';
 export const devRouter = express.Router({});
 
 devRouter.get('*', async (req, res) => {
-  // eslint-disable-next-line
-  const assetsByChunkName = res.locals.webpackStats.toJson().assetsByChunkName;
+  const assetsByChunkName = res.locals.webpackStats.toJson().assetsByChunkName; // eslint-disable-line
   const { css: styles, js: scripts } = groupWebpackAssets(assetsByChunkName.bundle);
-  const store = configureStore(createMemoryHistory({ initialEntries: [req.url] }));
+  const history = createMemoryHistory({ initialEntries: [req.url] });
   const sheet = new ServerStyleSheet();
   const url = req.url.split(/[?#]/)[0];
-
   const context = {};
+
+  const store = configureStore(history);
 
   const branch = matchRoutes(appRoutes, url);
   const pendingActions = preloadData(branch, store);
@@ -34,10 +34,12 @@ devRouter.get('*', async (req, res) => {
       res.status(404);
     }
 
-    const state = `window.__INITIAL_STATE__ = ${serialize(store.getState())};`;
     const content = renderApp(store, context, req.url, sheet);
     const styledElement = sheet.getStyleElement();
+    const initialValues = `
+      window.__INITIAL_STATE__ = ${serialize(store.getState())};
+    `;
 
-    return res.send(renderHtml({ content, styles, styledElement, scripts, state }));
+    return res.send(renderHtml({ content, styles, styledElement, scripts, initialValues }));
   });
 });

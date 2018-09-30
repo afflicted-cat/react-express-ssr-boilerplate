@@ -1,9 +1,9 @@
 import { compose, groupBy, ifElse, unless, values, map } from 'ramda';
 
-const createEmptyAssets = bundle => ({ css: [], js: [bundle] });
 const updateWebpackPath = path => (path.startsWith('/') ? path : `/${path}`);
 const getExtension = filename => filename.split('.').pop();
 
+const createEmptyAssets = bundle => ({ css: [], js: [updateWebpackPath(bundle)] });
 const defaultToEmptyAssets = unless(Array.isArray, createEmptyAssets);
 const groupAssets = compose(
   groupBy(getExtension),

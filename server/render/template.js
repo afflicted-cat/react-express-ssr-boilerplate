@@ -2,7 +2,7 @@ import React from 'react';
 import Helmet from 'react-helmet';
 
 /* eslint-disable react/no-danger, jsx-a11y/html-has-lang */
-export function Html({ styles = [], styledElement, scripts = [], content, state = '' }) {
+export function Html({ styles = [], styledElement, scripts = [], content, initialValues = '' }) {
   const helmet = Helmet.renderStatic();
   const htmlAttrs = helmet.htmlAttributes.toComponent();
   const bodyAttrs = helmet.bodyAttributes.toComponent();
@@ -19,7 +19,7 @@ export function Html({ styles = [], styledElement, scripts = [], content, state 
         {styles.map(href => (
           <link key={href} href={href} rel="stylesheet" />
         ))}
-        <script dangerouslySetInnerHTML={{ __html: state }} />
+        <script dangerouslySetInnerHTML={{ __html: initialValues }} />
       </head>
       <body {...bodyAttrs}>
         <div id="root" dangerouslySetInnerHTML={{ __html: content }} />

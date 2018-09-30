@@ -24,11 +24,13 @@ if (fs.existsSync(assetsJson)) {
 }
 
 prodRouter.get('*', cacheMiddleware, async (req, res) => {
-  const store = configureStore(createMemoryHistory({ initialEntries: [req.url] }));
   const { css: styles, js: scripts } = groupManifestAssets(staticFiles);
+  const history = createMemoryHistory({ initialEntries: [req.url] });
   const sheet = new ServerStyleSheet();
   const url = req.url.split(/[?#]/)[0];
   const context = {};
+
+  const store = configureStore(history);
 
   const branch = matchRoutes(appRoutes, url);
   const pendingActions = preloadData(branch, store);
@@ -42,11 +44,13 @@ prodRouter.get('*', cacheMiddleware, async (req, res) => {
       res.status(404);
     }
 
-    const state = `window.__INITIAL_STATE__ = ${serialize(store.getState())};`;
     const content = renderApp(store, context, req.url, sheet);
     const styledElement = sheet.getStyleElement();
+    const initialValues = `
+      window.__INITIAL_STATE__ = ${serialize(store.getState())};
+    `;
 
-    const html = renderHtml({ content, styles, styledElement, scripts, state });
+    const html = renderHtml({ content, styles, styledElement, scripts, initialValues });
 
     if (context.status !== 404 && cacheEnabled) {
       ssrCache.set(getCacheKey(req), html);
