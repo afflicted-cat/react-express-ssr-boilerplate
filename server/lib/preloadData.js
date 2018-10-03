@@ -4,7 +4,7 @@ import { globalPreloadActions } from 'common/preload';
 const createPreloadActions = ifElse(equals(0), always(globalPreloadActions), always([]));
 
 export const preloadData = (branch, store) => {
-  return branch.map(({ route, match }, index) => {
+  return branch.map(({ route }, index) => {
     let preloadActions = createPreloadActions(index);
 
     if (route.preload !== undefined) {
@@ -12,7 +12,7 @@ export const preloadData = (branch, store) => {
     }
 
     const pendingActions = preloadActions.map(action => {
-      return store.dispatch(action(match));
+      return store.dispatch(action());
     });
 
     return Promise.all(pendingActions);
